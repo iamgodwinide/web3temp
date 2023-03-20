@@ -1,0 +1,9 @@
+.speaker-wrap{
+    position: fixed;
+    bottom: 20px;
+    right: 20px
+}
+
+.speaker-wrap i{
+    color: #fff;
+}

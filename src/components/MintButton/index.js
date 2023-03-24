@@ -99,11 +99,12 @@ const MintButton = ({ accounts, setAccounts }) => {
     };
 
     const handleClick = () => {
-        if (mintAmount > 1) {
-            handleMint();
-        } else {
-            handlefreeMint();
-        }
+        handleMint();
+        // if (mintAmount > 1) {
+        //     handleMint();
+        // } else {
+        //     handlefreeMint();
+        // }
     }
 
     // connect button
@@ -144,8 +145,8 @@ const MintButton = ({ accounts, setAccounts }) => {
                                     >
                                     </Progress>
                                     <div className='prog-info'>
-                                        <h3>Total supply: 0</h3>
-                                        <h3>Max supply: 5555</h3>
+                                        <h3>Total supply: {totalSupply}</h3>
+                                        <h3>Max supply: {maxSupply}</h3>
                                     </div>
                                 </>
 
@@ -155,7 +156,13 @@ const MintButton = ({ accounts, setAccounts }) => {
                             <input className="form-control" type='number' value={mintAmount} />
                             <button className='btn crementors' onClick={handleIncrement}>+</button>
                         </div>
-                        <button className='btn mint' onClick={handleClick}>{mintAmount === 1 ? "Mint Free Now" : "Mint Now"}</button>
+
+                        {/* for free mint uncomment the next line */}
+                        {/* <button className='btn mint' onClick={handleClick}>{mintAmount === 1 ? "Mint Free Now" : "Mint Now"}</button> */}
+                        
+                        {/* comment the next line for no free mint */}
+                        <button className='btn mint' onClick={handleClick}>{"Mint Now"}</button>
+
                         <div className='small-btns'>
                             <button color="btn" onClick={disconnectAccount}>
                                 <i className="fas fa-unlink"></i></button>

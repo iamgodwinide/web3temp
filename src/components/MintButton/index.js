@@ -13,6 +13,7 @@ const MintButton = ({ accounts, setAccounts }) => {
     const [totalSupply, settotalSupply] = useState("0");
     const [maxSupply, setMaxSupply] = useState("0");
     const [loading, setLoading] = useState(true);
+    const [price, setPrice] = useState(0);
 
     const alert = useAlert();
 
@@ -25,6 +26,8 @@ const MintButton = ({ accounts, setAccounts }) => {
                 newcontract,
                 signer
             );
+            const cost = await contract.cost();
+            console.log("cost ---- ", cost)
             try {
                 const response = await contract.mint(BigNumber.from(mintAmount), {
                     value: ethers.utils.parseEther((0.005 * (mintAmount - 1)).toString())
@@ -60,6 +63,20 @@ const MintButton = ({ accounts, setAccounts }) => {
             };
         };
     };
+
+    // for getting price
+    const getPrice = async() => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const contract = new ethers.Contract(
+            newcontractAddress,
+            newcontract,
+            signer
+        );
+        const cost = await contract.cost();
+        const truncatedPrice = (cost / 1000000000000000000)
+        setPrice(truncatedPrice)
+    }
 
     //for getting the total supply
     async function gettotalsupply() {
@@ -99,12 +116,12 @@ const MintButton = ({ accounts, setAccounts }) => {
     };
 
     const handleClick = () => {
-        handleMint();
-        // if (mintAmount > 1) {
-        //     handleMint();
-        // } else {
-        //     handlefreeMint();
-        // }
+        // handleMint();
+        if (mintAmount > 2) {
+            handleMint();
+        } else {
+            handlefreeMint();
+        }
     }
 
     // connect button
@@ -123,6 +140,7 @@ const MintButton = ({ accounts, setAccounts }) => {
 
     useEffect(() => {
         if (accounts[0]) gettotalsupply();
+        getPrice()
     }, [accounts])
 
     return (
@@ -148,6 +166,9 @@ const MintButton = ({ accounts, setAccounts }) => {
                                         <h3>Total supply: {totalSupply}</h3>
                                         <h3>Max supply: {maxSupply}</h3>
                                     </div>
+                                    <div className='prog-info'>
+                                        <h3>Price: {mintAmount === 1? 0 : (price * mintAmount).toFixed(3)}</h3>
+                                    </div>
                                 </>
 
                         }
@@ -158,10 +179,10 @@ const MintButton = ({ accounts, setAccounts }) => {
                         </div>
 
                         {/* for free mint uncomment the next line */}
-                        {/* <button className='btn mint' onClick={handleClick}>{mintAmount === 1 ? "Mint Free Now" : "Mint Now"}</button> */}
+                        <button className='btn mint' onClick={handleClick}>{mintAmount === 1 ? "Mint Free Now" : "Mint Now"}</button>
                         
                         {/* comment the next line for no free mint */}
-                        <button className='btn mint' onClick={handleClick}>{"Mint Now"}</button>
+                        {/* <button className='btn mint' onClick={handleClick}>{"Mint Now"}</button> */}
 
                         <div className='small-btns'>
                             <button color="btn" onClick={disconnectAccount}>

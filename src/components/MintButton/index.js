@@ -9,7 +9,7 @@ import MerkleTree from 'merkletreejs'
 import addresses from '../../constants/addresses.json';
 
 // CONTRACT ADDRESS
-const newcontractAddress = "0x038a70439Cc330D4A077525C2F7d51f3F0dbD66C";
+const newcontractAddress = "0xf6aE3C76Aad36ADB307B675a385F44F015452A8a";
 
 const MintButton = ({ accounts, setAccounts }) => {
     const [mintAmount, setMintAmount] = useState(1);
@@ -40,14 +40,15 @@ const MintButton = ({ accounts, setAccounts }) => {
                 newcontract,
                 signer
             );
-            const cost = await contract.PRICE_ALLOWLIST();
             try {
                 // const response = await contract.AllowlistMint(BigNumber.from(mintAmount), hanldeMerkleProof(), {
                 //     value: ethers.utils.parseEther( mintAmount > 1 ? (price * mintAmount).toFixed(3) : 0 )
                 // });
+                console.log(contract.PublicMint)
                 const response = await contract.PublicMint(BigNumber.from(mintAmount), {
                     value: ethers.utils.parseEther( mintAmount > 1 ? (price * mintAmount).toFixed(3) : 0 )
                 });
+                console.log(response);
                 alert.success("minted successfully");
             } catch (err) {
                 alert.error(err?.reason);
@@ -71,9 +72,11 @@ const MintButton = ({ accounts, setAccounts }) => {
                 // const response = await contract.PublicMint(BigNumber.from(freemintAmount), {
                 //     value
                 // });
-                const response = await contract.AllowlistMint(BigNumber.from(freemintAmount), hanldeMerkleProof(), {
-                    value
-                });
+                // const response = await contract.AllowlistMint(BigNumber.from(freemintAmount), hanldeMerkleProof(), {
+                //     value
+                // });
+                const response = await contract.mintFree();
+                console.log(response);
                 alert.success("minted successfully");
             } catch (err) {
                 alert.error(err?.reason);
@@ -136,7 +139,7 @@ const MintButton = ({ accounts, setAccounts }) => {
 
     const handleClick = () => {
         // handleMint();
-        if (mintAmount > 2) {
+        if (mintAmount > 1) {
             handleMint();
         } else {
             handlefreeMint();

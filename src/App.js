@@ -14,10 +14,10 @@ function App() {
     <Router>
       <div className='root'>
         <Switch>
-          <Route exact path='/'>
+          {/* <Route exact path='/'>
             <Home accounts={accounts} setAccounts={setAccounts}/>
-          </Route>
-          <Route exact path='/mint'>
+          </Route> */}
+          <Route exact path='/'>
             <Mint accounts={accounts} setAccounts={setAccounts}/>
           </Route>
         </Switch>

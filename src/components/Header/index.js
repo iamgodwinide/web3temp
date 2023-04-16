@@ -24,12 +24,12 @@ const Header = ({accounts, setAccount}) => {
         <a href='/' className='logo'>WEB3TEMP</a>
         <nav>
             <ul>
-                <li>
+                {/* <li>
                     <NavLink to='/'>Home</NavLink>
                 </li>
                 <li>
                     <NavLink to='/mint'>Mint</NavLink>
-                </li>
+                </li> */}
             </ul>
         </nav>
         {

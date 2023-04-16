@@ -22,6 +22,7 @@
     "ethers": "^5.7.1",
     "framer-motion": "^7.5.3",
     "hardhat": "^2.11.2",
+    "merkletreejs": "^0.3.9",
     "react": "^18.2.0",
     "react-alert": "^7.0.3",
     "react-alert-template-basic": "^1.0.2",

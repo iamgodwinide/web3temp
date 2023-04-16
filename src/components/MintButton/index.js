@@ -4,8 +4,12 @@ import newcontract from './Newcontract.json';
 import './style.css'
 import { useAlert } from 'react-alert';
 import { Progress } from 'reactstrap'
+import { keccak256 } from 'ethers/lib/utils';
+import MerkleTree from 'merkletreejs'
+import addresses from '../../constants/addresses.json';
 
-const newcontractAddress = "0x17cC48c7e5C2D76b371cC4FbB96C2F91470fEe41";
+// CONTRACT ADDRESS
+const newcontractAddress = "0x038a70439Cc330D4A077525C2F7d51f3F0dbD66C";
 
 const MintButton = ({ accounts, setAccounts }) => {
     const [mintAmount, setMintAmount] = useState(1);
@@ -17,6 +21,16 @@ const MintButton = ({ accounts, setAccounts }) => {
 
     const alert = useAlert();
 
+    const buff2Hex = x => "0x" + x.toString('hex');
+
+    const hanldeMerkleProof = () => {
+        const leaves = addresses.map(addr => keccak256(addr));
+        const tree = new MerkleTree(leaves, keccak256, {sortPairs: true});
+        const leaf =  keccak256(accounts[0]);
+        const proof = tree.getProof(leaf).map(el => buff2Hex(el.data));
+        return proof;
+    }
+
     async function handleMint() {
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -26,20 +40,22 @@ const MintButton = ({ accounts, setAccounts }) => {
                 newcontract,
                 signer
             );
-            const cost = await contract.cost();
-            console.log("cost ---- ", cost)
+            const cost = await contract.PRICE_ALLOWLIST();
             try {
-                const response = await contract.mint(BigNumber.from(mintAmount), {
-                    value: ethers.utils.parseEther((0.005 * (mintAmount - 1)).toString())
+                // const response = await contract.AllowlistMint(BigNumber.from(mintAmount), hanldeMerkleProof(), {
+                //     value: ethers.utils.parseEther( mintAmount > 1 ? (price * mintAmount).toFixed(3) : 0 )
+                // });
+                const response = await contract.PublicMint(BigNumber.from(mintAmount), {
+                    value: ethers.utils.parseEther( mintAmount > 1 ? (price * mintAmount).toFixed(3) : 0 )
                 });
                 alert.success("minted successfully");
-                console.log(response);
             } catch (err) {
                 alert.error(err?.reason);
                 console.log("error: ", err)
             };
         };
     };
+
 
     async function handlefreeMint() {
         if (window.ethereum) {
@@ -52,17 +68,20 @@ const MintButton = ({ accounts, setAccounts }) => {
             );
             try {
                 const value = ethers.utils.parseEther((0).toString())
-                const response = await contract.mint(BigNumber.from(freemintAmount), {
+                // const response = await contract.PublicMint(BigNumber.from(freemintAmount), {
+                //     value
+                // });
+                const response = await contract.AllowlistMint(BigNumber.from(freemintAmount), hanldeMerkleProof(), {
                     value
                 });
                 alert.success("minted successfully");
-                console.log(response)
             } catch (err) {
                 alert.error(err?.reason);
                 console.log("error: ", err)
             };
         };
     };
+
 
     // for getting price
     const getPrice = async() => {
@@ -73,7 +92,7 @@ const MintButton = ({ accounts, setAccounts }) => {
             newcontract,
             signer
         );
-        const cost = await contract.cost();
+        const cost = await contract.PRICE_ALLOWLIST();
         const truncatedPrice = (cost / 1000000000000000000)
         setPrice(truncatedPrice)
     }
@@ -94,7 +113,7 @@ const MintButton = ({ accounts, setAccounts }) => {
             );
             // call the tokenIds from the contract
             const _totalsupply = await contract.totalSupply();
-            const _maxsupply = await contract.maxSupply();
+            const _maxsupply = await contract.MAX_SUPPLY();
             //_tokenIds is a `Big Number`. We need to convert the Big Number to a string
             settotalSupply(_totalsupply.toString());
             setMaxSupply(_maxsupply.toString());
